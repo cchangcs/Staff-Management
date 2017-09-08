@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/util
+   		http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<!--SpringMVC的配置文件，包含网站跳转逻辑的控制，配置  -->
+	<context:component-scan base-package="com.atguigu" use-default-filters="false">
+		<!--只扫描控制器。  -->
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!--配置视图解析器，方便页面返回  -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean> 
+	<!-- 避免IE执行ajax时，返回json出现下载文件 -->
+	<bean id="mappingJacksonHttpMessageConverter"
+        class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/html;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean> 
+
+    <!-- 启动SpringMVC的注解功能，完成请求和注解POJO的映射 -->
+    <bean
+        class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <!-- json转换器 -->
+                <ref bean="mappingJacksonHttpMessageConverter" />
+            </list>
+        </property>
+    </bean>
+	<!--两个标准配置  -->
+	<!-- 将springmvc不能处理的请求交给tomcat -->
+	<mvc:default-servlet-handler/>
+	<!-- 能支持springmvc更高级的一些功能，JSR303校验，快捷的ajax...映射动态请求 -->
+	<mvc:annotation-driven/> 
+</beans>
